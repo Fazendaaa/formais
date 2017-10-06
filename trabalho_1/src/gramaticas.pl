@@ -11,16 +11,19 @@
 %   Use  o  segundo  comando  na  sua interface SWI-Prolog para fazer o teste do
 %   codigo:
 %   
-%                      gerar_interios([ 1, 2, 3 ], []).
+%                   gramatica_interios([ 1, 2, 3 ], []).
+%                   gramatica_reais([ 1.2, 2, 3.4 ], []).
 %
+
+%   ------------------------------- INTEIROS -----------------------------------
 
 %   caso  o usuario nao passe nenhuma cadeia valida para teste, se deve retornar
 %   como teste invalido -- falso.
-gerar_inteiros([], []) :-
+gramatica_inteiros([], []) :-
     false.
 
 %   retorna em X as possiveis cadeias.
-gerar_inteiros("s --> b | [a], s.\nb --> [b], c.\nc --> [b].\n", []).
+gramatica_inteiros("s --> b | [a], s.\nb --> [b], c.\nc --> [b].\n", []).
 
 %   caso  o  usuario  passe  uma  cadeia e gostaria de verificar se ela formaria
 %   numberos ou nao.
@@ -30,29 +33,75 @@ gerar_inteiros("s --> b | [a], s.\nb --> [b], c.\nc --> [b].\n", []).
 %   ser  criado, isso porque se fosse apenas um elemento o segundo caso trataria
 %   a  cauda  como  um elemento vazio, passando assim um elemento vazio para ser
 %   verificado como inteiro, o que retornaria falso.
-gerar_inteiros([X], []) :-
+gramatica_inteiros([X], []) :-
     integer(X).
 
 %   nesse  cenario  passou-se  uma  cadeia  para  verificar  a  existencia de um
 %   possivel numero inteiro uma vez que se juntar os membros dessa cadeia.
-gerar_inteiros([Head|Tail], []) :-
-    gerar_inteiros(Tail, []),
-    gerar_inteiros([Head], []).
+gramatica_inteiros([Head|Tail], []) :-
+    gramatica_inteiros(Tail, []),
+    gramatica_inteiros([Head], []).
+
+%   --------------------------------- REAIS ------------------------------------
 
 %   as  proximas  declaracoes  sao  bem  analogas  as  anteriores, so que para o
 %   conjunto dos numeros reais.
-gerar_reais([], []) :-
+gramatica_reais([], []) :-
     false.
 
-gerar_reais(X, []) :-
+gramatica_reais(X, []) :-
     number(X).
 
-gerar_reais([X], []) :-
-    gerar_reais(X, []).
+gramatica_reais([X], []) :-
+    gramatica_reais(X, []).
 
-gerar_reais([Head|Tail], []) :-
-    gerar_reais(Tail, []),
-    gerar_reais(Head, []).
+gramatica_reais([Head|Tail], []) :-
+    gramatica_reais(Tail, []),
+    gramatica_reais(Head, []).
 
-gerar_receita(X, []) :-
-    true.
+%   -------------------------------- RECEITA -----------------------------------
+
+%   V == Verbo
+v(submerja).
+v(tampe).
+
+%   ART == Artigo
+art(os).
+art(a).
+
+%   N
+n(ovos).
+n(acrescente).
+n(sal).
+n(panela).
+n(deixe).
+
+%   A
+a(ferver).
+
+%   verifica a cada qual tipo pertence.
+gramatica_receita(X, R) :-
+    v(X),
+    R = "S";
+    art(X),
+    R = "ART";
+    n(X),
+    R = "N";
+    a(X),
+    R = "A".
+
+gramatica_receita([X], R) :-
+    gramatica_receita(X, R).
+
+%   reconhece o tipo de gramatica e retorna 
+gramatica_receita([Head|Tail], [A|B]) :-
+    gramatica_receita(Head, A),
+    gramatica_receita(Tail, B).
+
+%   
+test([], "").
+test([_], "A").
+test(X, "A").
+test([H|T], [A|B]) :-
+    test(H, A),
+    test(T, B).
