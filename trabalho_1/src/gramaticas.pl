@@ -13,7 +13,7 @@
 %   
 %                 $ gramatica_interios([ 1, 2, 3 ], []).
 %                 $ gramatica_reais([ 1.2, 2, 3.4 ], []).
-%                 $ gramatica_receita([fever, ovos], []).
+%                 $ gramatica_receita([ fever, ovos ], []).
 %
 
 %   ------------------------------- INTEIROS -----------------------------------
@@ -24,7 +24,11 @@ gramatica_inteiros([], []) :-
     false.
 
 %   retorna em X as possiveis cadeias.
-gramatica_inteiros("s --> b | [a], s.\nb --> [b], c.\nc --> [b].\n", []).
+%   'd' é a representação para dígito, como números inteiros podem ser formaodos
+%   apenas  pelos  digitos  0,  1,  2,  3,  4, 5, 6, 7, 8, 9 e seus equivalentes
+%   negativados,  por  facilidade  de  epresentacao  foi  escolido  o  'd'  para
+%   representar tal conjunto.
+gramatica_inteiros("d --> d | [d]", []).
 
 %   caso  o  usuario  passe  uma  cadeia e gostaria de verificar se ela formaria
 %   numberos ou nao.
@@ -49,6 +53,13 @@ gramatica_inteiros([Head|Tail], []) :-
 %   conjunto dos numeros reais.
 gramatica_reais([], []) :-
     false.
+
+%   sendo  o  'd'  a  representacao de digitos ja apresentada anteriormente, 'p'
+%   simboliza  o  '.' que mostra a delimitação da parte inteira de um numero, ou
+%   seja,  o  que  vier  depois dele sera a parte fracionaria; e o 'i' simboliza
+%   caso o número seja complexo.
+gramatica_reais("d --> d | [p]
+p --> [d] | i", []).
 
 gramatica_reais(X, []) :-
     number(X).
@@ -80,35 +91,31 @@ n(deixe).
 %   A.
 a(ferver).
 
-%   verificacao de seguranca.
-gramatica_receita([]) :-
-    false.
-gramatica_receita([], []) :-
-    false.
-
 %   verifica a cada qual tipo pertence.
 gramatica_receita(X, R) :-
+    %   caso seja v
     v(X),
     R = "S";
+    %   caso seja art
     art(X),
     R = "ART";
+    %   caso seja n
     n(X),
     R = "N";
+    %   caso seja a
     a(X),
     R = "A".
 
-%   faz validacao da gramatica enviada.
-gramatica_receita(X, []) :-
-    gramatica_receita(X, _).
+%   verificacao de seguranca.
+gramatica_receita([], []) :-
+    false.
 
-%   tratando o cenario de se ter apenas um valor no array, que seria um caso que
-%   a proxima declaracao nao trataria.
-gramatica_receita([X], []) :-
-    gramatica_receita(X, _).
 
-gramatica_receita([Head|Tail], []) :-
-    gramatica_receita(Head, _),
-    gramatica_receita(Tail, _).
+%   retorna as regras da gramatica.
+gramatica_receita("s --> [vp] | [np]
+vp --> v | [np]
+np --> [n_linha] | art | n
+n_linha --> n | a", []).
 
 %   retorna os argumentos que equivalem a gramatica apresentada.
 gramatica_receita([X], R) :-
